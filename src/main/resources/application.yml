@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: langchain4j-demo
+
+
+langchain4j:
+  community:
+    dashscope:
+      api-key: ${TONGYI_AI_KEY}
+      model-name: qwen-max
