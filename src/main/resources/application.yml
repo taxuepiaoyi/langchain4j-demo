@@ -16,5 +16,11 @@ mybatis-plus:
 langchain4j:
   community:
     dashscope:
-      api-key: ${TONGYI_AI_KEY}
-      model-name: qwen-max
+      chat-model:
+       api-key: ${TONGYI_AI_KEY}
+       model-name: qwen-max
+
+       # 流式处理引擎
+      streaming-chat-model:
+        api-key: ${TONGYI_AI_KEY}
+        model-name: qwen-max

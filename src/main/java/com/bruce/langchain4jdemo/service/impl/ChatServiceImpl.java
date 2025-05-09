@@ -25,17 +25,17 @@ import java.io.IOException;
 public class ChatServiceImpl implements ChatService {
 
     @Resource
-    private QwenChatModel chatLanguageModel;
+    private QwenChatModel qwenChatModel;
 
     @Resource
-    private QwenStreamingChatModel streamingChatLanguageModel;
+    private QwenStreamingChatModel qwenStreamingChatModel;
 
     @Resource
     private PersistentChatMemoryStore persistentChatMemoryStore;
 
     @Override
     public String chat(String userMessage) {
-        return chatLanguageModel.chat(userMessage);
+        return qwenChatModel.chat(userMessage);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public String chat(UserMessage userMessage) {
         ChatRequest chatRequest = ChatRequest.builder().messages(userMessage).build();
-        return chatLanguageModel.chat(chatRequest).aiMessage().text();
+        return qwenChatModel.chat(chatRequest).aiMessage().text();
     }
 
     /**
@@ -58,7 +58,7 @@ public class ChatServiceImpl implements ChatService {
     public SseEmitter stream(UserMessage userMessage) {
         SseEmitter emitter = new SseEmitter(0L); // 不限制超时时间
         ChatRequest chatRequest = ChatRequest.builder().messages(userMessage).build();
-        streamingChatLanguageModel.chat(chatRequest, new StreamingChatResponseHandler() {
+        qwenStreamingChatModel.chat(chatRequest, new StreamingChatResponseHandler() {
 
             @Override
             public void onPartialResponse(String token) {
@@ -92,7 +92,7 @@ public class ChatServiceImpl implements ChatService {
     public Flux<String> streamOnFlux(UserMessage userMessage) {
         ChatRequest chatRequest = ChatRequest.builder().messages(userMessage).build();
         Flux<String> flux = Flux.create(emitter -> {
-            streamingChatLanguageModel.chat(chatRequest, new StreamingChatResponseHandler(){
+            qwenStreamingChatModel.chat(chatRequest, new StreamingChatResponseHandler(){
 
                 @Override
                 public void onPartialResponse(String s) {
@@ -134,7 +134,7 @@ public class ChatServiceImpl implements ChatService {
             return chatMemory;
         };
         return AiServices.builder(Assistant.class)
-                .chatModel(chatLanguageModel)
+                .chatModel(qwenChatModel)
                 .chatMemoryProvider(chatMemoryProvider)
                 .build();
     }
