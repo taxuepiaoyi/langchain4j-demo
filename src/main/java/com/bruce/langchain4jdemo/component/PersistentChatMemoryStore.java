@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import static dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson;
+import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
@@ -26,50 +28,37 @@ public class PersistentChatMemoryStore implements ChatMemoryStore {
     @Resource
     private ChatMemoryMapper chatMemoryMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-
     @Override
     public List<ChatMessage> getMessages(Object obj) {
-        if(obj == null || !(obj instanceof String)){
-            return List.of() ;
+        if(obj == null ){
+            throw new IllegalArgumentException("getMessages object cannot be null");
         }
-        String memoryId = (String) obj;
+        String memoryId = obj.toString();
         ChatMemoryEntity entity = chatMemoryMapper.findByMemoryId(memoryId) ;
         if( entity == null){
             return List.of();
         }
-        try {
-            return Arrays.asList(objectMapper.readValue(
-                    entity.getMessagesJson(), ChatMessage[].class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return messagesFromJson(entity.getMessagesJson()) ;
     }
 
     @Override
     public void updateMessages(Object obj, List<ChatMessage> messages) {
-        if(obj == null || !(obj instanceof String)){
-            return  ;
+        if(obj == null ){
+            throw new IllegalArgumentException("getMessages object cannot be null");
         }
-        String memoryId = (String) obj;
-
-        try {
-            String json = objectMapper.writeValueAsString(messages);
-            ChatMemoryEntity entity = chatMemoryMapper.findByMemoryId(memoryId);
-            if (entity == null) {
-                entity = new ChatMemoryEntity();
-                entity.setMemoryId(memoryId);
-            }
-            entity.setMessagesJson(json);
-            entity.setUpdatedAt(LocalDateTime.now());
-            if (entity.getId() == null) {
-                chatMemoryMapper.insert(entity);
-            } else {
-                chatMemoryMapper.updateById(entity);
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        String memoryId = obj.toString() ;
+        String json = messagesToJson(messages);
+        ChatMemoryEntity entity = chatMemoryMapper.findByMemoryId(memoryId);
+        if (entity == null) {
+            entity = new ChatMemoryEntity();
+            entity.setMemoryId(memoryId);
+        }
+        entity.setMessagesJson(json);
+        entity.setUpdatedAt(LocalDateTime.now());
+        if (entity.getId() == null) {
+            chatMemoryMapper.insert(entity);
+        } else {
+            chatMemoryMapper.updateById(entity);
         }
     }
 

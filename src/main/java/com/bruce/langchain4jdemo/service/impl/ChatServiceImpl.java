@@ -5,6 +5,7 @@ import com.bruce.langchain4jdemo.service.Assistant;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
+import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -114,17 +115,27 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public String chatMemory(Integer memoryId, String userMessage) {
-        ChatMemoryProvider chatMemoryProvider = storeId -> MessageWindowChatMemory.builder()
-                .id(storeId)
-                .maxMessages(10)
-                .chatMemoryStore(persistentChatMemoryStore)
-                .build();
+    public String chatMemory(String memoryId, String userMessage) {
+        Assistant assistant = generateAssistant() ;
+        return assistant.chat(memoryId, userMessage);
+    }
 
-        Assistant assistant = AiServices.builder(Assistant.class)
+    private Assistant generateAssistant(){
+        ChatMemoryProvider chatMemoryProvider = memoryId -> {
+            MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder()
+                    .id(memoryId)
+                    .maxMessages(10)
+                    .chatMemoryStore(persistentChatMemoryStore)
+                    .build();
+            if (chatMemory.messages().isEmpty()) {
+                chatMemory.add(SystemMessage.from("Welcome to the chat!"));
+            }
+            System.out.println("chatMemory messages:" + chatMemory.messages());
+            return chatMemory;
+        };
+        return AiServices.builder(Assistant.class)
                 .chatModel(chatLanguageModel)
                 .chatMemoryProvider(chatMemoryProvider)
                 .build();
-        return assistant.chat(memoryId, userMessage);
     }
 }

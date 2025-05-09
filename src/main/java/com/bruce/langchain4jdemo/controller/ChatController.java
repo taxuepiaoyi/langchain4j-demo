@@ -42,13 +42,12 @@ public class ChatController {
     }
 
     @PostMapping("/chatMemory")
-    public Map<Integer, String> chatMemory(@RequestBody Map<String, String> request) {
-        String memoryIdStr = request.get("memoryId");
-        if (memoryIdStr == null || memoryIdStr.isEmpty()) {
-            return Map.of(0 ,"memoryId is null");
+    public Map<String, String> chatMemory(@RequestBody Map<String, String> request) {
+        String memoryId = request.get("memoryId");
+        if (memoryId == null || memoryId.isEmpty()) {
+            throw new IllegalArgumentException("memoryId cannot be null or empty");
         }
         String userMessage = request.get("userMessage");
-        Integer memoryId = Integer.valueOf(memoryIdStr);
         String result = chatService.chatMemory(memoryId, userMessage);
         return Map.of(memoryId, result);
     }
