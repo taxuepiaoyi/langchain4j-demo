@@ -5,6 +5,8 @@ import com.bruce.langchain4jdemo.service.Assistant;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
+import dev.langchain4j.community.model.dashscope.WanxImageModel;
+import dev.langchain4j.data.image.Image;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
@@ -12,6 +14,7 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+import dev.langchain4j.model.output.Response;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -20,12 +23,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 @Service
 public class ChatServiceImpl implements ChatService {
 
     @Resource
     private QwenChatModel qwenChatModel;
+
+    @Resource
+    private WanxImageModel wanxImageModel ;
 
     @Resource
     private QwenStreamingChatModel qwenStreamingChatModel;
@@ -47,6 +55,17 @@ public class ChatServiceImpl implements ChatService {
     public String chat(UserMessage userMessage) {
         ChatRequest chatRequest = ChatRequest.builder().messages(userMessage).build();
         return qwenChatModel.chat(chatRequest).aiMessage().text();
+    }
+
+    /**
+     * 文生图
+     * @param prompt
+     * @return
+     */
+    @Override
+    public URI generateImage(String prompt) {
+        Response<Image> response = wanxImageModel.generate(prompt) ;
+        return response.content().url();
     }
 
     /**

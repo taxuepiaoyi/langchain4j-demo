@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -39,6 +40,16 @@ public class ChatController {
     @GetMapping("/streamOnFlux")
     public Flux<String> streamOnFlux(@RequestParam("userMessage") String userMessage) {
         return chatService.streamOnFlux(UserMessage.userMessage(userMessage));
+    }
+
+    /**
+     * 生成图片
+     * @param prompt
+     * @return
+     */
+    @GetMapping("/generateImage")
+    public URI generateImage(@RequestParam("prompt") String prompt) {
+        return chatService.generateImage(prompt);
     }
 
     @PostMapping("/chatMemory")
