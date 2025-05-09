@@ -1,9 +1,12 @@
 package com.bruce.langchain4jdemo.controller;
 
+import com.bruce.langchain4jdemo.dto.ImagePromptDTO;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.data.message.UserMessage;
 import jakarta.annotation.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
@@ -44,12 +47,12 @@ public class ChatController {
 
     /**
      * 生成图片
-     * @param prompt
      * @return
      */
-    @GetMapping("/generateImage")
-    public URI generateImage(@RequestParam("prompt") String prompt) {
-        return chatService.generateImage(prompt);
+    @PostMapping(value = "/generateImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public URI generateImage(@RequestPart("prompt") String prompt, @RequestPart("image") MultipartFile image) throws Exception{
+        ImagePromptDTO imagePromptDTO = ImagePromptDTO.builder().prompt(prompt).image(image).build() ;
+        return chatService.generateImage(imagePromptDTO);
     }
 
     @PostMapping("/chatMemory")

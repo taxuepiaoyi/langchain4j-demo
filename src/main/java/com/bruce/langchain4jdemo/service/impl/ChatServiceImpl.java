@@ -1,6 +1,7 @@
 package com.bruce.langchain4jdemo.service.impl;
 
 import com.bruce.langchain4jdemo.component.PersistentChatMemoryStore;
+import com.bruce.langchain4jdemo.dto.ImagePromptDTO;
 import com.bruce.langchain4jdemo.service.Assistant;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
@@ -59,11 +60,21 @@ public class ChatServiceImpl implements ChatService {
 
     /**
      * 文生图
-     * @param prompt
+     * @param imagePromptDTO
      * @return
      */
     @Override
-    public URI generateImage(String prompt) {
+    public URI generateImage(ImagePromptDTO imagePromptDTO) throws Exception{
+        String prompt = imagePromptDTO.getPrompt() ;
+        String base64Image = imagePromptDTO.getBase64Image() ;
+
+        // 如果有图片，则进行图片编辑
+        if(base64Image != null && !base64Image.isEmpty()){
+            Image image = Image.builder().base64Data(base64Image).build() ;
+            return wanxImageModel.edit(image,prompt).content().url();
+        }
+
+        // 根据文本描述生成图片
         Response<Image> response = wanxImageModel.generate(prompt) ;
         return response.content().url();
     }

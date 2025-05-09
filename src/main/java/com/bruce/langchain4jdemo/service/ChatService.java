@@ -1,5 +1,6 @@
 package com.bruce.langchain4jdemo.service;
 
+import com.bruce.langchain4jdemo.dto.ImagePromptDTO;
 import dev.langchain4j.data.message.UserMessage;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
@@ -13,10 +14,10 @@ public interface ChatService {
 
     /**
      * 生成图片
-     * @param prompt
+     * @param imagePromptDTO
      * @return
      */
-    URI generateImage(String prompt);
+    URI generateImage(ImagePromptDTO imagePromptDTO) throws Exception;
 
     /**
      * SSE流式输出
