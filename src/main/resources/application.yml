@@ -1,6 +1,16 @@
 spring:
   application:
     name: langchain4j-demo
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/langchain4j?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 12345678
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    mapper-locations: classpath:/mapper/**/*Mapper.xml
 
 
 langchain4j:

@@ -1,15 +1,19 @@
 package com.bruce.langchain4jdemo.service.impl;
 
+import com.bruce.langchain4jdemo.component.PersistentChatMemoryStore;
+import com.bruce.langchain4jdemo.service.Assistant;
 import com.bruce.langchain4jdemo.service.ChatService;
+import dev.langchain4j.community.model.dashscope.QwenChatModel;
+import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.memory.chat.ChatMemoryProvider;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
-import static dev.langchain4j.model.LambdaStreamingResponseHandler.onNextAndError;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -20,10 +24,13 @@ import java.io.IOException;
 public class ChatServiceImpl implements ChatService {
 
     @Resource
-    private ChatLanguageModel chatLanguageModel;
+    private QwenChatModel chatLanguageModel;
 
     @Resource
-    private StreamingChatLanguageModel streamingChatLanguageModel;
+    private QwenStreamingChatModel streamingChatLanguageModel;
+
+    @Resource
+    private PersistentChatMemoryStore persistentChatMemoryStore;
 
     @Override
     public String chat(String userMessage) {
@@ -104,5 +111,20 @@ public class ChatServiceImpl implements ChatService {
         },FluxSink.OverflowStrategy.BUFFER);
 
         return flux;
+    }
+
+    @Override
+    public String chatMemory(Integer memoryId, String userMessage) {
+        ChatMemoryProvider chatMemoryProvider = storeId -> MessageWindowChatMemory.builder()
+                .id(storeId)
+                .maxMessages(10)
+                .chatMemoryStore(persistentChatMemoryStore)
+                .build();
+
+        Assistant assistant = AiServices.builder(Assistant.class)
+                .chatModel(chatLanguageModel)
+                .chatMemoryProvider(chatMemoryProvider)
+                .build();
+        return assistant.chat(memoryId, userMessage);
     }
 }

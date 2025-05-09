@@ -1,10 +1,8 @@
 package com.bruce.langchain4jdemo.config;
-
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.data.message.SystemMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +16,9 @@ public class AIConfig {
     @Value("${langchain4j.community.dashscope.model-name}")
     private String modelName ;
 
+
     @Bean
-    public ChatLanguageModel getChatLanguageModel(){
+    public QwenChatModel getChatLanguageModel(){
         return QwenChatModel.builder().apiKey(tongyiAiKey).modelName(modelName).build() ;
     }
 
@@ -28,9 +27,11 @@ public class AIConfig {
      * @return
      */
     @Bean
-    public StreamingChatLanguageModel getStreamingChatLanguageModel(){
+    public QwenStreamingChatModel getStreamingChatLanguageModel(){
         return QwenStreamingChatModel.builder().apiKey(tongyiAiKey).modelName(modelName).build() ;
     }
+
+
 
     /**
      * 设置AI系统角色

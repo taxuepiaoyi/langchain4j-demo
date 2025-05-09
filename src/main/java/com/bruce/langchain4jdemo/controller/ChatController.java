@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
@@ -37,5 +39,17 @@ public class ChatController {
     @GetMapping("/streamOnFlux")
     public Flux<String> streamOnFlux(@RequestParam("userMessage") String userMessage) {
         return chatService.streamOnFlux(UserMessage.userMessage(userMessage));
+    }
+
+    @PostMapping("/chatMemory")
+    public Map<Integer, String> chatMemory(@RequestBody Map<String, String> request) {
+        String memoryIdStr = request.get("memoryId");
+        if (memoryIdStr == null || memoryIdStr.isEmpty()) {
+            return Map.of(0 ,"memoryId is null");
+        }
+        String userMessage = request.get("userMessage");
+        Integer memoryId = Integer.valueOf(memoryIdStr);
+        String result = chatService.chatMemory(memoryId, userMessage);
+        return Map.of(memoryId, result);
     }
 }

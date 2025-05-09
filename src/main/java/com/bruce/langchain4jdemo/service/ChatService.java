@@ -17,4 +17,5 @@ public interface ChatService {
      */
     Flux<String> streamOnFlux(UserMessage userMessage) ;
 
+    String chatMemory(Integer memoryId, String userMessage) ;
 }
