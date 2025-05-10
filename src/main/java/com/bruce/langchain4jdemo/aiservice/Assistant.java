@@ -1,4 +1,4 @@
-package com.bruce.langchain4jdemo.service;
+package com.bruce.langchain4jdemo.aiservice;
 
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.UserMessage;

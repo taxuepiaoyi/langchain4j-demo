@@ -2,7 +2,7 @@ package com.bruce.langchain4jdemo.service.impl;
 
 import com.bruce.langchain4jdemo.component.PersistentChatMemoryStore;
 import com.bruce.langchain4jdemo.dto.ImagePromptDTO;
-import com.bruce.langchain4jdemo.service.Assistant;
+import com.bruce.langchain4jdemo.aiservice.Assistant;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
@@ -25,7 +25,6 @@ import reactor.core.publisher.FluxSink;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 @Service
 public class ChatServiceImpl implements ChatService {
