@@ -1,5 +1,7 @@
 package com.bruce.langchain4jdemo.config;
 import com.bruce.langchain4jdemo.aiservice.UserAiService;
+import com.bruce.langchain4jdemo.aiservice.WeatherAiService;
+import com.bruce.langchain4jdemo.tools.WeatherTools;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.community.model.dashscope.WanxImageModel;
@@ -42,5 +44,10 @@ public class AIConfig {
     @Bean
     public UserAiService getUserAiService(QwenChatModel qwenChatModel){
         return AiServices.create(UserAiService.class, qwenChatModel);
+    }
+
+    @Bean
+    public WeatherAiService getWeatherAiService(QwenChatModel qwenChatModel, WeatherTools weatherTools) {
+        return AiServices.builder(WeatherAiService.class).chatModel(qwenChatModel).tools(weatherTools).build();
     }
 }
