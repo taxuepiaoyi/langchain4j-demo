@@ -2,7 +2,7 @@ package com.bruce.langchain4jdemo.service.impl;
 
 import com.bruce.langchain4jdemo.component.PersistentChatMemoryStore;
 import com.bruce.langchain4jdemo.dto.ImagePromptDTO;
-import com.bruce.langchain4jdemo.aiservice.Assistant;
+import com.bruce.langchain4jdemo.aiservice.ChatMemoryAIService;
 import com.bruce.langchain4jdemo.service.ChatService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
@@ -145,11 +145,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public String chatMemory(String memoryId, String userMessage) {
-        Assistant assistant = generateAssistant() ;
-        return assistant.chat(memoryId, userMessage);
+        ChatMemoryAIService chatMemoryAIService = generateAssistant() ;
+        return chatMemoryAIService.chat(memoryId, userMessage);
     }
 
-    private Assistant generateAssistant(){
+    private ChatMemoryAIService generateAssistant(){
         ChatMemoryProvider chatMemoryProvider = memoryId -> {
             MessageWindowChatMemory chatMemory = MessageWindowChatMemory.builder()
                     .id(memoryId)
@@ -162,7 +162,7 @@ public class ChatServiceImpl implements ChatService {
             System.out.println("chatMemory messages:" + chatMemory.messages());
             return chatMemory;
         };
-        return AiServices.builder(Assistant.class)
+        return AiServices.builder(ChatMemoryAIService.class)
                 .chatModel(qwenChatModel)
                 .chatMemoryProvider(chatMemoryProvider)
                 .build();
