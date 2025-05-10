@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     @Resource
-    private QwenChatModel qwenChatModel;
+    private UserAiService userAiService;
 
     /**
      * 从文本中提取用户信息
@@ -21,13 +21,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDTO extractPersonFrom(String userMassge) {
-        UserAiService userAiService = generateUserAiService();
         UserDTO userDTO = userAiService.extractPersonFrom(userMassge);
         return userDTO;
-    }
-
-    // 生成用户AiService
-    private UserAiService generateUserAiService() {
-        return AiServices.create(UserAiService.class, qwenChatModel);
     }
 }

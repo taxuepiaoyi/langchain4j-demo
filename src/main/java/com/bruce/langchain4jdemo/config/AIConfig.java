@@ -1,9 +1,11 @@
 package com.bruce.langchain4jdemo.config;
+import com.bruce.langchain4jdemo.aiservice.UserAiService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.community.model.dashscope.WanxImageModel;
 import dev.langchain4j.data.message.SystemMessage;
 
+import dev.langchain4j.service.AiServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,5 +37,10 @@ public class AIConfig {
         return WebClient.builder()
                 .baseUrl(openWeatherBaseUrl)
                 .build();
+    }
+
+    @Bean
+    public UserAiService getUserAiService(QwenChatModel qwenChatModel){
+        return AiServices.create(UserAiService.class, qwenChatModel);
     }
 }
