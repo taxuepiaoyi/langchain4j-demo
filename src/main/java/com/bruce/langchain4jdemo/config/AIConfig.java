@@ -7,6 +7,7 @@ import dev.langchain4j.data.message.SystemMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class AIConfig {
@@ -17,6 +18,9 @@ public class AIConfig {
     @Value("${langchain4j.community.dashscope.wax-image-model.model-name}")
     private String imageModelName;
 
+    @Value("${openweather.base-url}")
+    private String openWeatherBaseUrl;
+
     @Bean
     public WanxImageModel getnewWanxImageModel(){
         WanxImageModel wanxImageModel = WanxImageModel.builder()
@@ -26,12 +30,10 @@ public class AIConfig {
         return wanxImageModel;
     }
 
-    /**
-     * 设置AI系统角色
-     * @return
-     */
     @Bean
-    public SystemMessage getSystemMessage(){
-        return SystemMessage.from("你是一个智能聊天助手");
+    public WebClient webClient() {
+        return WebClient.builder()
+                .baseUrl(openWeatherBaseUrl)
+                .build();
     }
 }

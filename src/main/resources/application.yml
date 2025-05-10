@@ -27,3 +27,7 @@ langchain4j:
       streaming-chat-model:
         api-key: ${TONGYI_AI_KEY}
         model-name: qwen-max
+
+openweather:
+    api-key: ${OPENWEATHER_KEY}
+    base-url: https://api.openweathermap.org/data/2.5/weather
