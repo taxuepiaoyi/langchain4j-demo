@@ -6,9 +6,11 @@ import com.bruce.langchain4jdemo.tools.WeatherTools;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.service.AiServices;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class WeatherServiceImpl implements WeatherService {
 
     @Resource
@@ -20,7 +22,11 @@ public class WeatherServiceImpl implements WeatherService {
     @Override
     public String search(String inputMsg) {
         WeatherAiService weatherAiService = getWeatherAiService();
-        return weatherAiService.getWeather(inputMsg);
+        WeatherAiService.City cityRecord = weatherAiService.getCityName(inputMsg);
+        if(cityRecord == null){
+            return "抱歉，未找到该城市";
+        }
+        return weatherAiService.getWeather(cityRecord);
     }
 
 

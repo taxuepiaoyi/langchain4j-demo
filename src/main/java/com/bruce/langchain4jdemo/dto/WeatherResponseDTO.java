@@ -1,6 +1,6 @@
 package com.bruce.langchain4jdemo.dto;
 
-public class WeatherResponse {
+public class WeatherResponseDTO {
     private Main main;
     private Weather[] weather;
 
