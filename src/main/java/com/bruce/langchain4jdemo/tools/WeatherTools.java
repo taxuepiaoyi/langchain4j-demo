@@ -1,6 +1,7 @@
 package com.bruce.langchain4jdemo.tools;
 
 import com.bruce.langchain4jdemo.aiservice.WeatherAiService;
+import com.bruce.weather.service.WeatherService;
 import dev.langchain4j.agent.tool.Tool;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class WeatherTools {
 
     @Resource
-    private com.bruce.openweather.service.OpenWeatherService openWeatherService  ;
+    private WeatherService weatherService;
 
 
     @Tool("获取当前城市的天气情况")
@@ -27,7 +28,7 @@ public class WeatherTools {
         String cityEnglishName = city.cityEnglishName();
         String cityChineseName = city.cityChineseName();
         try {
-            return openWeatherService.getWeather(cityEnglishName);
+            return weatherService.getWeather(cityEnglishName);
         } catch (Exception e) {
             return "获取" + cityChineseName + "天气时发生错误: " + e.getMessage();        }
     }

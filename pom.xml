@@ -64,7 +64,7 @@
 
         <dependency>
             <groupId>com.bruce</groupId>
-            <artifactId>openweather-spring-boot-starter</artifactId>
+            <artifactId>weather-spring-boot-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
